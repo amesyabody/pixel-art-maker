@@ -141,7 +141,7 @@
     <button class="tool-btn active" id="tool-pen" title="ペン">✏️ ペン</button>
     <button class="tool-btn" id="tool-eraser" title="消しゴム">🧹 消しゴム</button>
     <button class="tool-btn" id="tool-bucket" title="塗りつぶし">🪣 塗りつぶし</button>
-    <button class="tool-btn" id="tool-eyedropper" title="スポイト">💉 スポイト</button>
+    <button class="tool-btn" id="tool-eyedropper" title="スポイト">🔍 スポイト</button>
   </div>
 
   <!-- Color picker -->
@@ -276,13 +276,14 @@ function paint(e) {
 
 function floodFill(r, c, target, replacement) {
   if (target === replacement) return;
-  if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
-  if (pixels[r][c] !== target) return;
-  pixels[r][c] = replacement;
-  floodFill(r+1, c, target, replacement);
-  floodFill(r-1, c, target, replacement);
-  floodFill(r, c+1, target, replacement);
-  floodFill(r, c-1, target, replacement);
+  const stack = [[r, c]];
+  while (stack.length) {
+    const [cr, cc] = stack.pop();
+    if (cr < 0 || cr >= ROWS || cc < 0 || cc >= COLS) continue;
+    if (pixels[cr][cc] !== target) continue;
+    pixels[cr][cc] = replacement;
+    stack.push([cr+1, cc], [cr-1, cc], [cr, cc+1], [cr, cc-1]);
+  }
 }
 
 canvas.addEventListener('mousedown', e => { isDrawing = true; paint(e); });
